@@ -1,0 +1,49 @@
+version: "3"
+services:
+  summerProjectDB:
+    #platform: linux/x86_64
+    image: mysql:8
+    ports:
+      - "3304:3306"
+    environment:
+      MYSQL_DATABASE: ${DATABASE_NAME}
+      MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
+    command: --default-authentication-plugin=mysql_native_password
+    cap_add:
+      - SYS_NICE
+    restart: always
+    volumes:
+       - summerProjectDB-data:/var/lib/mysql
+      #- ./:/docker-entrypoint-initdb.d
+    networks:
+      dev:
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "9089:80"
+    links:
+      - summerProjectDB
+    environment:
+      PMA_HOST: summerProjectDB
+      PMA_PORT: 3306
+    restart: always
+    networks:
+      - dev
+
+  summerpojectphp:
+    build: php
+    ports:
+      - "8004:80"
+    volumes:
+      - ./php/vhosts:/etc/apache2/sites-enabled
+      - ./:/var/www
+    restart: always
+    networks:
+      - dev
+
+networks:
+  dev:
+
+volumes:
+  summerProjectDB-data:
