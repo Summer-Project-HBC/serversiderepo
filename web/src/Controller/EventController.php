@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Events;
+use DateTime;
+use DateTimeInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -32,5 +34,24 @@ class EventController extends AbstractController
 
 return
 $this->json($data);
+}
+
+#[Route('/addEvent', name:'createEvent', methods:['POST'])]
+function add(Request $request, ManagerRegistry $doctrine)
+    {
+    $em = $doctrine->getManager();
+    $newEvent = new Events();
+    $newEvent->setTitle(htmlspecialchars($request->request->get('title')));
+    $newEvent->setInfo(htmlentities($request->request->get('info')));
+    $newEvent->setPicture($request->request->get('picture'));
+    $newEvent->setDate(date_create());
+    $newEvent->setTime(date_create());
+    $newEvent->setDuration($request->request->get('duration'));
+    $newEvent->setLocation($request->request->get('location'));
+    $newEvent->setTransport($request->request->get('transport'));
+    $em->persist($newEvent);
+    $em->flush();
+    return $this->json('Created new project successfully with id ' .$newEvent->getId());
+
 }
 }
