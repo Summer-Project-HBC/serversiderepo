@@ -59,21 +59,22 @@ function getData(EntityManagerInterface $em, int $id): Response
 }
 
 #[Route('/addEvent', name:'createEvent', methods:['POST'])]
-function add(Request $request, ManagerRegistry $doctrine)
+public function add(Request $request, ManagerRegistry $doctrine): Response
     {
     $em = $doctrine->getManager();
+    $data = json_decode($request->getContent(), true);
     $newEvent = new Events();
-    $newEvent->setTitle(htmlspecialchars($request->request->get('title')));
-    $newEvent->setInfo(htmlentities($request->request->get('info')));
-    $newEvent->setPicture($request->request->get('picture'));
+    $newEvent->setTitle($data['title']);
+    $newEvent->setInfo($data['info']);
+    $newEvent->setPicture($data['picture']);
     $newEvent->setDate(date_create());
     $newEvent->setTime(date_create());
-    $newEvent->setDuration(number_format(($request->request->get('duration'))));
-    $newEvent->setLocation(htmlspecialchars($request->request->get('location')));
-    $newEvent->setTransport(htmlspecialchars($request->request->get('transport')));
+    $newEvent->setDuration(number_format(($data['duration'])));
+    $newEvent->setLocation($data['location']);
+    $newEvent->setTransport($data['transport']);
     $em->persist($newEvent);
     $em->flush();
-    return $this->json('Created new project successfully with id ');
+    return $this->json('Created new project successfully with id ' . $newEvent->getId());
 
 }
 }
