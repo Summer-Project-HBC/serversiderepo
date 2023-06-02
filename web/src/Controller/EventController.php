@@ -25,7 +25,8 @@ class EventController extends AbstractController
             'title' => htmlspecialchars_decode($event->getTitle()), 
             'picture' => htmlspecialchars_decode($event->getPicture()), 
             'duration' => htmlspecialchars_decode($event->getDuration()), 
-            'info' => htmlspecialchars_decode($event->getInfo()), 'date' => ($event->getDate()),
+            'info' => htmlspecialchars_decode($event->getInfo()),
+            'date' => ($event->getDate()),
             'time' => ($event->getTime()), 
             'location' => htmlspecialchars_decode($event->getLocation()), 
             'transport' => htmlspecialchars_decode($event->getTransport()), ]; 
@@ -34,6 +35,27 @@ class EventController extends AbstractController
 
 return
 $this->json($data);
+}
+
+#[Route('/event/{id}', name:'getOne')]
+function getData(EntityManagerInterface $em, int $id): Response
+    {
+    $event = $em->getRepository(Events::class)->find($id);
+
+    $data = [
+        'id' => $event->getId(),
+        'title' => htmlspecialchars_decode($event->getTitle()), 
+        'picture' => htmlspecialchars_decode($event->getPicture()), 
+        'duration' => htmlspecialchars_decode($event->getDuration()), 
+        'info' => htmlspecialchars_decode($event->getInfo()),
+        'date' => ($event->getDate()),
+        'time' => ($event->getTime()), 
+        'location' => htmlspecialchars_decode($event->getLocation()), 
+        'transport' => htmlspecialchars_decode($event->getTransport()),
+    ];
+
+    return 
+    $this->json($data);
 }
 
 #[Route('/addEvent', name:'createEvent', methods:['POST'])]
@@ -46,12 +68,12 @@ function add(Request $request, ManagerRegistry $doctrine)
     $newEvent->setPicture($request->request->get('picture'));
     $newEvent->setDate(date_create());
     $newEvent->setTime(date_create());
-    $newEvent->setDuration($request->request->get('duration'));
-    $newEvent->setLocation($request->request->get('location'));
-    $newEvent->setTransport($request->request->get('transport'));
+    $newEvent->setDuration(number_format(($request->request->get('duration'))));
+    $newEvent->setLocation(htmlspecialchars($request->request->get('location')));
+    $newEvent->setTransport(htmlspecialchars($request->request->get('transport')));
     $em->persist($newEvent);
     $em->flush();
-    return $this->json('Created new project successfully with id ' .$newEvent->getId());
+    return $this->json('Created new project successfully with id ');
 
 }
 }
