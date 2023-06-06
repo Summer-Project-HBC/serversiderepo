@@ -3,8 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\Events;
-use DateTime;
-use DateTimeInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -26,8 +24,8 @@ class EventController extends AbstractController
             'picture' => htmlspecialchars_decode($event->getPicture()), 
             'duration' => htmlspecialchars_decode($event->getDuration()), 
             'info' => htmlspecialchars_decode($event->getInfo()),
-            'date' => ($event->getDate()),
-            'time' => ($event->getTime()), 
+            'date' => htmlspecialchars_decode($event->getDate()),
+            'time' => htmlspecialchars_decode($event->getTime()),
             'location' => htmlspecialchars_decode($event->getLocation()), 
             'transport' => htmlspecialchars_decode($event->getTransport()), ]; 
         } 
@@ -48,8 +46,8 @@ function getData(EntityManagerInterface $em, int $id): Response
         'picture' => htmlspecialchars_decode($event->getPicture()), 
         'duration' => htmlspecialchars_decode($event->getDuration()), 
         'info' => htmlspecialchars_decode($event->getInfo()),
-        'date' => ($event->getDate()),
-        'time' => ($event->getTime()), 
+        'date' => htmlspecialchars_decode($event->getDate()),
+        'time' => htmlspecialchars_decode($event->getTime()), 
         'location' => htmlspecialchars_decode($event->getLocation()), 
         'transport' => htmlspecialchars_decode($event->getTransport()),
     ];
@@ -67,14 +65,14 @@ public function add(Request $request, ManagerRegistry $doctrine): Response
     $newEvent->setTitle($data['title']);
     $newEvent->setInfo($data['info']);
     $newEvent->setPicture($data['picture']);
-    $newEvent->setDate(date_create());
-    $newEvent->setTime(date_create());
+    $newEvent->setDate($data['date']);
+    $newEvent->setTime($data['time']);
     $newEvent->setDuration(number_format(($data['duration'])));
     $newEvent->setLocation($data['location']);
     $newEvent->setTransport($data['transport']);
     $em->persist($newEvent);
     $em->flush();
-    return $this->json('Created new project successfully with id ' . $newEvent->getId());
+    return $this->json('Created new project successfully with id ' . $data['date']);
 
 }
 }

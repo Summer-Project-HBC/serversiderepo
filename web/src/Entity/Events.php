@@ -23,11 +23,11 @@ class Events
     #[ORM\Column(type: Types::TEXT)]
     private ?string $info = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $date = null;
+    #[ORM\Column(length: 255)]
+    private ?string $date = null;
 
-    #[ORM\Column(type: Types::TIME_MUTABLE)]
-    private ?\DateTimeInterface $time = null;
+    #[ORM\Column(length: 255)]
+    private ?string $time = null;  
 
     #[ORM\Column]
     private ?int $duration = null;
@@ -79,24 +79,24 @@ class Events
         return $this;
     }
 
-    public function getDate(): ?\DateTimeInterface
+    public function getDate(): ?string
     {
         return $this->date;
     }
 
-    public function setDate(\DateTimeInterface $date): self
+    public function setDate(string $date): self
     {
         $this->date = $date;
 
         return $this;
     }
 
-    public function getTime(): ?\DateTimeInterface
+    public function getTime(): ?string
     {
         return $this->time;
     }
 
-    public function setTime(\DateTimeInterface $time): self
+    public function setTime(string $time): self
     {
         $this->time = $time;
 
