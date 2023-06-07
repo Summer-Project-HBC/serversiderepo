@@ -28,7 +28,12 @@ function login(Request $request, ManagerRegistry $doctrine): Response
         return $this->json(['message' => 'Invalid password.'], Response::HTTP_UNAUTHORIZED);
     }
 
-    return $this->json($data['login']);
+    $res = [
+        'username' => $data['login'],
+        'userid' => $user->getId(),
+    ];
+
+    return $this->json($res);
 }
 
 #[Route('/newuser', name:'newuser', methods:['POST'])]
