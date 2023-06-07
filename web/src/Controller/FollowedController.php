@@ -78,6 +78,11 @@ function follow(Request $request, ManagerRegistry $doctrine): Response
 
         $followedEvents = $em->getRepository(Followed::class)->findBy(['userId' => $user]);
         $events = array_map(fn (Followed $followed) => $followed->getEventId()->getId(), $followedEvents);
+
+        if (empty($events)) {
+            return $this->json([]);
+        }
+
         $myevents = $em->getRepository(Events::class)->findBy(['id' => $events]);
 
         foreach ($myevents as $event)
@@ -92,6 +97,28 @@ function follow(Request $request, ManagerRegistry $doctrine): Response
             'location' => htmlspecialchars_decode($event->getLocation()), 
             'transport' => htmlspecialchars_decode($event->getTransport()), ]; 
         } 
+
+        return $this->json($res);
+    }
+
+    #[Route('/checkmyevents/{userId}', name: 'checkmyevents', methods: ['GET'])]
+    public function checkmyevents(string $userId, ManagerRegistry $doctrine): Response
+    {
+        $em = $doctrine->getManager();
+        $user = $em->getRepository(Login::class)->find($userId);
+
+        $followedEvents = $em->getRepository(Followed::class)->findBy(['userId' => $user]);
+        $events = array_map(fn (Followed $followed) => $followed->getEventId()->getId(), $followedEvents);
+
+        if (empty($events)) {
+            return $this->json('');
+        }
+
+        $myevents = $em->getRepository(Events::class)->findBy(['id' => $events]);
+
+        foreach ($myevents as $event)
+
+        { $res[] = $event->getId(); }
 
         return $this->json($res);
     }
